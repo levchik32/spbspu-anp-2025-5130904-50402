@@ -124,11 +124,11 @@ int main(int argc, char **argv)
     return 2;
   }
 
-  long long statMatrix[saldaev::Max_size] = {};
+  long long fixed_length_Matrix[saldaev::Max_size] = {};
   long long *matrix = nullptr;
   if (mode == 1)
   {
-    matrix = statMatrix;
+    matrix = fixed_length_Matrix;
   }
   else
   {
