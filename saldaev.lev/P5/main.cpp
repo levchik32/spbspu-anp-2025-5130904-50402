@@ -5,6 +5,9 @@ namespace saldaev
 	struct Point_t
 	{
 		double x, y;
+		Point_t operator-(const Point_t &other);
+		Point_t operator*(const double &coef);
+		Point_t &operator+=(const Point_t &other);
 		Point_t &operator-=(const Point_t &other);
 		Point_t &operator*=(const double &other);
 	};
@@ -68,6 +71,23 @@ int main()
 }
 
 //
+saldaev::Point_t saldaev::Point_t::operator-(const Point_t &other)
+{
+  return {x - other.x, y - other.y};
+}
+
+saldaev::Point_t saldaev::Point_t::operator*(const double &coef)
+{
+  return {x * coef, y * coef};
+}
+
+saldaev::Point_t &saldaev::Point_t::operator+=(const Point_t &other)
+{
+	x += other.x;
+	y += other.y;
+	return *this;
+}
+
 saldaev::Point_t &saldaev::Point_t::operator-=(const Point_t &other)
 {
 	x -= other.x;
@@ -180,4 +200,62 @@ saldaev::Polygon &saldaev::Polygon::operator=(Polygon &&other) noexcept
 	other.vertexes = nullptr;
 
 	return *this;
+}
+
+double saldaev::Polygon::getArea() const
+{
+	double area = 0;
+	size_t j = 0;
+	for (size_t i = 0; i < k; ++i)
+	{
+		j = (i + 1) % k;
+		area += (vertexes[j].x - vertexes[i].x) * (vertexes[i].y + vertexes[j].y) / 2;
+	}
+	return area;
+}
+
+saldaev::Rectangle_t saldaev::Polygon::getFrameRect() const
+{
+	double maxx = vertexes[0].x;
+	double minx = maxx;
+	double maxy = vertexes[0].y;
+	double miny = maxy;
+
+	for (size_t i = 1; i < k; ++i)
+	{
+		maxx = std::max(maxx, vertexes[i].x);
+		minx = std::min(minx, vertexes[i].x);
+		maxy = std::max(maxy, vertexes[i].y);
+		miny = std::min(miny, vertexes[i].y);
+	}
+
+	double dx = maxx - minx;
+	double dy = maxy - miny;
+	return {dx, dy, {minx + dx / 2, miny + dy / 2}};
+}
+
+void saldaev::Polygon::move(Point_t target)
+{
+	Point_t dp = target - pos;
+	for (size_t i = 0; i < k; ++i)
+	{
+		vertexes[i] += dp;
+	}
+}
+
+void saldaev::Polygon::move(double dx, double dy)
+{
+	pos += {dx, dy};
+	for (size_t i = 0; i < k; ++i)
+	{
+		vertexes[i] += {dx, dy};
+	}
+}
+
+void saldaev::Polygon::scale(double coef)
+{
+	for (size_t i = 0; i < k; ++i)
+	{
+		vertexes[i] += (vertexes[i] - pos) * (coef - 1);
+	}
 }
