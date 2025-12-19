@@ -6,7 +6,9 @@ namespace saldaev
 	{
 		double x, y;
 		Point_t operator-(const Point_t &other);
+		Point_t operator+(const Point_t &other);
 		Point_t operator*(const double &coef);
+		Point_t operator/(const double &coef);
 		Point_t &operator+=(const Point_t &other);
 		Point_t &operator-=(const Point_t &other);
 		Point_t &operator*=(const double &other);
@@ -75,9 +77,19 @@ saldaev::Point_t saldaev::Point_t::operator-(const Point_t &other)
 	return {x - other.x, y - other.y};
 }
 
+saldaev::Point_t saldaev::Point_t::operator+(const Point_t &other)
+{
+	return {x + other.x, y + other.y};
+}
+
 saldaev::Point_t saldaev::Point_t::operator*(const double &coef)
 {
 	return {x * coef, y * coef};
+}
+
+saldaev::Point_t saldaev::Point_t::operator/(const double &coef)
+{
+	return {x / coef, y / coef};
 }
 
 saldaev::Point_t &saldaev::Point_t::operator+=(const Point_t &other)
@@ -255,4 +267,31 @@ void saldaev::Polygon::scale(double coef)
 	{
 		vertexes[i] += (vertexes[i] - pos) * (coef - 1);
 	}
+}
+
+saldaev::Point_t saldaev::calculateCenter(Point_t *vs, size_t kk)
+{
+	if (kk < 3)
+	{
+		throw std::logic_error("Invalid polygon vertices");
+	}
+	Point_t centre = {0, 0};
+	double t_area = 0;
+	double sum_area = 0;
+	Point_t ab = {0, 0};
+	Point_t ac = {0, 0};
+	for (size_t i = 1; i < kk - 1; ++i)
+	{
+		ab = vs[i] - vs[0];
+		ac = vs[i + 1] - vs[0];
+		t_area = (ab.x * ac.y - ab.y * ac.x) / 2.0;
+		centre += ((vs[0] + vs[i] + vs[i + 1]) / 3.0) * t_area;
+		sum_area += t_area;
+	}
+
+	if (sum_area == 0.0)
+	{
+		throw std::logic_error("Invalid polygon vertices");
+	}
+	return centre / sum_area;
 }
