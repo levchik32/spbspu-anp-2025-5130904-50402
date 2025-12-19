@@ -30,6 +30,20 @@ namespace saldaev
 		virtual ~Shape() = default;
 	};
 
+	struct Rectangle : Shape
+	{
+		Rectangle(Point_t p, double w, double h);
+		double getArea() const override;
+		Rectangle_t getFrameRect() const override;
+		void move(Point_t target) override;
+		void move(double dx, double dy) override;
+		void scale(double coef) override;
+
+	private:
+		Point_t pos;
+		double width, height;
+	};
+
 	struct Square : Shape
 	{
 		Square(Point_t p, double s);
@@ -113,6 +127,37 @@ saldaev::Point_t &saldaev::Point_t::operator*=(const double &other)
 	return *this;
 }
 
+saldaev::Rectangle::Rectangle(Point_t p, double w, double h) : Shape(), pos(p), width(w), height(h)
+{
+}
+
+double saldaev::Rectangle::getArea() const
+{
+	return width * height;
+}
+
+saldaev::Rectangle_t saldaev::Rectangle::getFrameRect() const
+{
+	return {width, height, pos};
+}
+
+void saldaev::Rectangle::move(Point_t target)
+{
+	pos = target;
+}
+
+void saldaev::Rectangle::move(double dx, double dy)
+{
+	pos.x += dx;
+	pos.y += dy;
+}
+
+void saldaev::Rectangle::scale(double coef)
+{
+	width *= coef;
+	height *= coef;
+}
+
 saldaev::Square::Square(Point_t p, double s) : Shape(), pos(p), side(s)
 {
 }
@@ -158,8 +203,7 @@ saldaev::Polygon::~Polygon()
 }
 
 saldaev::Polygon::Polygon(const Polygon &other) : k(other.k),
-																									vertexes(new Point_t[other.k]),
-																									pos(other.pos)
+		vertexes(new Point_t[other.k]), pos(other.pos)
 {
 	for (size_t i = 0; i < k; ++i)
 	{
@@ -188,8 +232,7 @@ saldaev::Polygon &saldaev::Polygon::operator=(const Polygon &other)
 }
 
 saldaev::Polygon::Polygon(Polygon &&other) noexcept : k(other.k),
-																											vertexes(other.vertexes),
-																											pos(other.pos)
+		vertexes(other.vertexes), pos(other.pos)
 {
 	other.vertexes = nullptr;
 }
