@@ -70,15 +70,14 @@ int main()
 {
 }
 
-//
 saldaev::Point_t saldaev::Point_t::operator-(const Point_t &other)
 {
-  return {x - other.x, y - other.y};
+	return {x - other.x, y - other.y};
 }
 
 saldaev::Point_t saldaev::Point_t::operator*(const double &coef)
 {
-  return {x * coef, y * coef};
+	return {x * coef, y * coef};
 }
 
 saldaev::Point_t &saldaev::Point_t::operator+=(const Point_t &other)
@@ -102,7 +101,6 @@ saldaev::Point_t &saldaev::Point_t::operator*=(const double &other)
 	return *this;
 }
 
-//
 saldaev::Square::Square(Point_t p, double s) : Shape(), pos(p), side(s)
 {
 }
@@ -133,7 +131,6 @@ void saldaev::Square::scale(double coef)
 	side *= coef;
 }
 
-//
 saldaev::Polygon::Polygon(Point_t *vs, size_t kk) : k(kk), pos(calculateCenter(vs, kk))
 {
 	vertexes = new Point_t[k];
@@ -209,9 +206,9 @@ double saldaev::Polygon::getArea() const
 	for (size_t i = 0; i < k; ++i)
 	{
 		j = (i + 1) % k;
-		area += (vertexes[j].x - vertexes[i].x) * (vertexes[i].y + vertexes[j].y) / 2;
+		area += vertexes[i].x * vertexes[j].y - vertexes[j].x * vertexes[i].y;
 	}
-	return area;
+	return std::abs(area) * 0.5;
 }
 
 saldaev::Rectangle_t saldaev::Polygon::getFrameRect() const
