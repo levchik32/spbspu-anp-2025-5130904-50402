@@ -81,11 +81,70 @@ namespace saldaev
 
 	Point_t calculateCenter(Point_t *vs, size_t kk);
 
-	void isotropicScaleFromPoint(Shape *shps,  size_t k, Point_t pt, double coef);
+	void isotropicScaleFromPoint(Shape **shps, size_t k, Point_t pt, double coef);
 }
 
 int main()
 {
+	using saldaev::Point_t;
+	using saldaev::Polygon;
+	using saldaev::Rectangle;
+	using saldaev::Shape;
+	using saldaev::Square;
+
+	Shape *shps[3] = {};
+	shps[0] = new Rectangle({10, 10}, 5, 3);
+	shps[1] = new Square({-1, -1}, 10);
+	Point_t vss[6] = {{0, 0}, {-2, 3}, {-1, 5}, {0, 4}, {1, 5}, {2, 3}};
+	shps[2] = new Polygon(vss, 6);
+
+	double area = 0;
+	double sum_area = 0;
+	saldaev::Rectangle_t frame = {0, 0, {0, 0}};
+	double mix, max, miy, may;
+	double x = 0, y = 0, c = 0;
+	while (std::cin >> x >> y >> c)
+	{
+		std::cout << "before:\n";
+		for (size_t i = 0; i < 3; ++i)
+		{
+			area = shps[i]->getArea();
+			frame = shps[i]->getFrameRect();
+			std::cout << " * own area - " << area << ", frame: {" << frame.pos.x << ", ";
+			std::cout << frame.pos.y << "}, w - " << frame.width << ", h - " << frame.height << '\n';
+			sum_area += area;
+			mix = std::min(mix, frame.pos.x - frame.width / 2);
+			max = std::max(max, frame.pos.x + frame.width / 2);
+			miy = std::min(miy, frame.pos.y - frame.height / 2);
+			may = std::max(may, frame.pos.y + frame.height / 2);
+		}
+		std::cout << "sum area - " << sum_area << ", frame: {" << (mix + max) / 2 << ", ";
+		std::cout << (miy + may) / 2 << "}, w - " << max - mix << ", h - " << may - miy << '\n';
+
+		isotropicScaleFromPoint(shps, 3, {x, y}, c);
+
+		sum_area = 0;
+		std::cout << "after:\n";
+		for (size_t i = 0; i < 3; ++i)
+		{
+			area = shps[i]->getArea();
+			frame = shps[i]->getFrameRect();
+			std::cout << " * own area - " << area << ", frame: {" << frame.pos.x << ", ";
+			std::cout << frame.pos.y << "}, w - " << frame.width << ", h - " << frame.height << '\n';
+			sum_area += area;
+			mix = std::min(mix, frame.pos.x - frame.width / 2);
+			max = std::max(max, frame.pos.x + frame.width / 2);
+			miy = std::min(miy, frame.pos.y - frame.height / 2);
+			may = std::max(may, frame.pos.y + frame.height / 2);
+		}
+		std::cout << "sum area - " << sum_area << ", frame: {" << (mix + max) / 2 << ", ";
+		std::cout << (miy + may) / 2 << "}, w - " << max - mix << ", h - " << may - miy << '\n';
+	}
+
+	for (size_t i = 0; i < 3; ++i)
+	{
+		delete shps[i];
+	}
 }
 
 saldaev::Point_t saldaev::Point_t::operator-(const Point_t &other)
@@ -341,14 +400,14 @@ saldaev::Point_t saldaev::calculateCenter(Point_t *vs, size_t kk)
 	return centre / sum_area;
 }
 
-void saldaev::isotropicScaleFromPoint(Shape *shps,  size_t k, Point_t pt, double coef)
+void saldaev::isotropicScaleFromPoint(Shape **shps, size_t k, Point_t pt, double coef)
 {
 	for (size_t i = 0; i < k; ++i)
 	{
-		Point_t p1 = shps[i].getFrameRect().pos;
-		shps[i].move(pt);
-		Point_t p2 = shps[i].getFrameRect().pos;
-		shps[i].move(pt + ((p1 - p2) * coef));
-		shps[i].scale(coef);
+		Point_t p1 = shps[i]->getFrameRect().pos;
+		shps[i]->move(pt);
+		Point_t p2 = shps[i]->getFrameRect().pos;
+		shps[i]->move(pt + ((p1 - p2) * coef));
+		shps[i]->scale(coef);
 	}
 }
