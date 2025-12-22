@@ -354,6 +354,7 @@ void saldaev::Polygon::move(Point_t target)
 	{
 		vertexes[i] += dp;
 	}
+	pos += dp;
 }
 
 void saldaev::Polygon::move(double dx, double dy)
