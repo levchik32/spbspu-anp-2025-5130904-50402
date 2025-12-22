@@ -80,6 +80,8 @@ namespace saldaev
 	};
 
 	Point_t calculateCenter(Point_t *vs, size_t kk);
+
+	void isotropicScaleFromPoint(Shape *shps,  size_t k, Point_t pt, double coef);
 }
 
 int main()
@@ -337,4 +339,16 @@ saldaev::Point_t saldaev::calculateCenter(Point_t *vs, size_t kk)
 		throw std::logic_error("Invalid polygon vertices");
 	}
 	return centre / sum_area;
+}
+
+void saldaev::isotropicScaleFromPoint(Shape *shps,  size_t k, Point_t pt, double coef)
+{
+	for (size_t i = 0; i < k; ++i)
+	{
+		Point_t p1 = shps[i].getFrameRect().pos;
+		shps[i].move(pt);
+		Point_t p2 = shps[i].getFrameRect().pos;
+		shps[i].move(pt + ((p1 - p2) * coef));
+		shps[i].scale(coef);
+	}
 }
