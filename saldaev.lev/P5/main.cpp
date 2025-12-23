@@ -145,6 +145,13 @@ int main()
 	{
 		delete shps[i];
 	}
+
+	if (std::cin.eof())
+	{
+		return 0;
+	}
+	std::cerr << "bad input";
+	return 1;
 }
 
 saldaev::Point_t saldaev::Point_t::operator-(const Point_t &other)
