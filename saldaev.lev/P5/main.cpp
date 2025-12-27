@@ -82,6 +82,8 @@ namespace saldaev
   Point_t calculateCenter(Point_t *vs, size_t kk);
 
   void isotropicScaleFromPoint(Shape **shps, size_t k, Point_t pt, double coef);
+
+  void TellStatistics(Shape **shps, size_t k);
 }
 
 int main()
@@ -98,58 +100,29 @@ int main()
   Point_t vss[6] = {{0, 0}, {-2, 3}, {-1, 5}, {0, 4}, {1, 5}, {2, 3}};
   shps[2] = new Polygon(vss, 6);
 
-  double area = 0;
-  double sum_area = 0;
-  saldaev::Rectangle_t frame = {0, 0, {0, 0}};
-  double mix = shps[0]->getFrameRect().pos.x - shps[0]->getFrameRect().width / 2;
-  double max = mix;
-  double miy = shps[0]->getFrameRect().pos.y - shps[0]->getFrameRect().height / 2;
-  double may = miy;
   double x = 0, y = 0, c = 0;
-  while (std::cin >> x >> y >> c) {
-    std::cout << "before:\n";
+  std::cin >> x >> y >> c;
+  if (std::cin.fail()) {
+    std::cerr << "bad input" << '\n';
     for (size_t i = 0; i < 3; ++i) {
-      area = shps[i]->getArea();
-      frame = shps[i]->getFrameRect();
-      std::cout << " * own area - " << area << ", frame: {" << frame.pos.x << ", ";
-      std::cout << frame.pos.y << "}, w - " << frame.width << ", h - " << frame.height << '\n';
-      sum_area += area;
-      mix = std::min(mix, frame.pos.x - frame.width / 2);
-      max = std::max(max, frame.pos.x + frame.width / 2);
-      miy = std::min(miy, frame.pos.y - frame.height / 2);
-      may = std::max(may, frame.pos.y + frame.height / 2);
+      delete shps[i];
     }
-    std::cout << "sum area - " << sum_area << ", frame: {" << (mix + max) / 2 << ", ";
-    std::cout << (miy + may) / 2 << "}, w - " << max - mix << ", h - " << may - miy << '\n';
-
-    isotropicScaleFromPoint(shps, 3, {x, y}, c);
-
-    sum_area = 0;
-    std::cout << "after:\n";
-    for (size_t i = 0; i < 3; ++i) {
-      area = shps[i]->getArea();
-      frame = shps[i]->getFrameRect();
-      std::cout << " * own area - " << area << ", frame: {" << frame.pos.x << ", ";
-      std::cout << frame.pos.y << "}, w - " << frame.width << ", h - " << frame.height << '\n';
-      sum_area += area;
-      mix = std::min(mix, frame.pos.x - frame.width / 2);
-      max = std::max(max, frame.pos.x + frame.width / 2);
-      miy = std::min(miy, frame.pos.y - frame.height / 2);
-      may = std::max(may, frame.pos.y + frame.height / 2);
-    }
-    std::cout << "sum area - " << sum_area << ", frame: {" << (mix + max) / 2 << ", ";
-    std::cout << (miy + may) / 2 << "}, w - " << max - mix << ", h - " << may - miy << '\n';
+    return 1;
   }
+
+  std::cout << "before:\n";
+  saldaev::TellStatistics(shps, 3);
+
+  isotropicScaleFromPoint(shps, 3, {x, y}, c);
+
+  std::cout << "\nafter:\n";
+  saldaev::TellStatistics(shps, 3);
 
   for (size_t i = 0; i < 3; ++i) {
     delete shps[i];
   }
 
-  if (std::cin.eof()) {
-    return 0;
-  }
-  std::cerr << "bad input" << '\n';
-  return 1;
+  return 0;
 }
 
 saldaev::Point_t saldaev::Point_t::operator-(const Point_t &other)
@@ -413,4 +386,29 @@ void saldaev::isotropicScaleFromPoint(Shape **shps, size_t k, Point_t pt, double
     shps[i]->move(pt + ((p1 - p2) * coef));
     shps[i]->scale(coef);
   }
+}
+
+void saldaev::TellStatistics(Shape **shps, size_t k)
+{
+  double area = 0;
+  double sum_area = 0;
+  saldaev::Rectangle_t frame = {0, 0, {0, 0}};
+  double mix = shps[0]->getFrameRect().pos.x - shps[0]->getFrameRect().width / 2;
+  double max = mix;
+  double miy = shps[0]->getFrameRect().pos.y - shps[0]->getFrameRect().height / 2;
+  double may = miy;
+
+  for (size_t i = 0; i < k; ++i) {
+    area = shps[i]->getArea();
+    frame = shps[i]->getFrameRect();
+    std::cout << " * own area - " << area << ", frame: {" << frame.pos.x << ", ";
+    std::cout << frame.pos.y << "}, w - " << frame.width << ", h - " << frame.height << '\n';
+    sum_area += area;
+    mix = std::min(mix, frame.pos.x - frame.width / 2);
+    max = std::max(max, frame.pos.x + frame.width / 2);
+    miy = std::min(miy, frame.pos.y - frame.height / 2);
+    may = std::max(may, frame.pos.y + frame.height / 2);
+  }
+  std::cout << "sum area - " << sum_area << ", frame: {" << (mix + max) / 2 << ", ";
+  std::cout << (miy + may) / 2 << "}, w - " << max - mix << ", h - " << may - miy << "\n";
 }
