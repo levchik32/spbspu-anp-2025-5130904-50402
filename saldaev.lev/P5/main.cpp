@@ -101,7 +101,10 @@ int main()
   double area = 0;
   double sum_area = 0;
   saldaev::Rectangle_t frame = {0, 0, {0, 0}};
-  double mix, max, miy, may;
+  double mix = shps[0]->getFrameRect().pos.x - shps[0]->getFrameRect().width / 2;
+	double max = mix;
+	double miy = shps[0]->getFrameRect().pos.y - shps[0]->getFrameRect().height / 2;
+	double may = miy;
   double x = 0, y = 0, c = 0;
   while (std::cin >> x >> y >> c) {
     std::cout << "before:\n";
