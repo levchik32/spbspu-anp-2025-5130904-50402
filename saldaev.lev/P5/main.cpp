@@ -257,8 +257,8 @@ void saldaev::Square::scale(double coef)
 }
 
 saldaev::Polygon::Polygon(Point_t *vs, size_t kk):
-  pos(calculateCenter(vs, kk)),
-  k(kk)
+  k(kk),
+  pos(calculateCenter(vs, kk))
 {
   vertexes = new Point_t[k];
   for (size_t i = 0; i < k; ++i) {
