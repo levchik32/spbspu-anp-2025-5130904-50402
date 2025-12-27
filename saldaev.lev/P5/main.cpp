@@ -100,18 +100,18 @@ int main()
   Point_t vss[6] = {{0, 0}, {-2, 3}, {-1, 5}, {0, 4}, {1, 5}, {2, 3}};
   shps[2] = new Polygon(vss, 6);
 
+  std::cout << "before:\n";
+  saldaev::TellStatistics(shps, 3);
+
   double x = 0, y = 0, c = 0;
   std::cin >> x >> y >> c;
-  if (std::cin.fail()) {
+  if (std::cin.fail() || c < 0) {
     std::cerr << "bad input" << '\n';
     for (size_t i = 0; i < 3; ++i) {
       delete shps[i];
     }
     return 1;
   }
-
-  std::cout << "before:\n";
-  saldaev::TellStatistics(shps, 3);
 
   isotropicScaleFromPoint(shps, 3, {x, y}, c);
 
