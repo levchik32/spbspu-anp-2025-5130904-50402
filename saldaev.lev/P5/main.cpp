@@ -148,7 +148,7 @@ int main()
   if (std::cin.eof()) {
     return 0;
   }
-  std::cerr << "bad input";
+  std::cerr << "bad input" << '\n';
   return 1;
 }
 
