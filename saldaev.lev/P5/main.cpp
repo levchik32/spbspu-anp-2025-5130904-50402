@@ -30,7 +30,11 @@ namespace saldaev
     virtual rectangle_t getFrameRect() const noexcept = 0;
     virtual void move(point_t target) noexcept = 0;
     virtual void move(double dx, double dy) noexcept = 0;
-    virtual void scale(double coef) noexcept = 0;
+
+    void scale(double coef);
+    void nsfwscale(double coef) noexcept;
+    private:
+    virtual void doScale(double coef) = 0;
   };
 
   struct Rectangle final: Shape
@@ -40,11 +44,11 @@ namespace saldaev
     rectangle_t getFrameRect() const noexcept override;
     void move(point_t target) noexcept override;
     void move(double dx, double dy) noexcept override;
-    void scale(double coef) noexcept override;
 
   private:
     point_t pos_;
     double width_, height_;
+    void doScale(double coef) override;
   };
 
   struct Square final: Shape
@@ -54,11 +58,11 @@ namespace saldaev
     rectangle_t getFrameRect() const noexcept override;
     void move(point_t target) noexcept override;
     void move(double dx, double dy) noexcept override;
-    void scale(double coef) noexcept override;
 
   private:
     point_t pos_;
     double side_;
+    void doScale(double coef) override;
   };
 
   struct Polygon final: Shape
@@ -74,12 +78,12 @@ namespace saldaev
     rectangle_t getFrameRect() const noexcept override;
     void move(point_t target) noexcept override;
     void move(double dx, double dy) noexcept override;
-    void scale(double coef) noexcept override;
 
   private:
     point_t *vertexes_;
     size_t k_;
     point_t pos_;
+    void doScale(double coef) override;
   };
 
   point_t calculateCenter(const point_t *vs, const size_t kk);
@@ -176,6 +180,20 @@ saldaev::point_t &saldaev::point_t::operator*=(const double other)
   return *this;
 }
 
+void saldaev::Shape::scale(double coef)
+{
+  if (coef <= 0)
+  {
+    throw std::logic_error("coef <= 0");
+  }
+  doScale(coef);
+}
+
+void saldaev::Shape::nsfwscale(double coef) noexcept
+{
+  doScale(coef);
+}
+
 saldaev::Rectangle::Rectangle(point_t p, double w, double h):
   pos_(p),
   width_(w),
@@ -203,7 +221,7 @@ void saldaev::Rectangle::move(double dx, double dy)
   pos_.y_ += dy;
 }
 
-void saldaev::Rectangle::scale(double coef)
+void saldaev::Rectangle::doScale(double coef)
 {
   width_ *= coef;
   height_ *= coef;
@@ -236,7 +254,7 @@ void saldaev::Square::move(double dx, double dy)
   pos_.y_ += dy;
 }
 
-void saldaev::Square::scale(double coef)
+void saldaev::Square::doScale(double coef)
 {
   side_ *= coef;
 }
@@ -352,7 +370,7 @@ void saldaev::Polygon::move(double dx, double dy)
   }
 }
 
-void saldaev::Polygon::scale(double coef)
+void saldaev::Polygon::doScale(double coef)
 {
   for (size_t i = 0; i < k_; ++i) {
     vertexes_[i] += (vertexes_[i] - pos_) * (coef - 1);
