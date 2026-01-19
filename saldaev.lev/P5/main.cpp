@@ -2,258 +2,267 @@
 #include <iostream>
 namespace saldaev
 {
-  struct Point_t
+  const size_t ShapeAmount = 3;
+
+  struct point_t
   {
-    double x, y;
-    Point_t operator-(const Point_t &other);
-    Point_t operator+(const Point_t &other);
-    Point_t operator*(const double &coef);
-    Point_t operator/(const double &coef);
-    Point_t &operator+=(const Point_t &other);
-    Point_t &operator-=(const Point_t &other);
-    Point_t &operator*=(const double &other);
+    double x_, y_;
+    point_t operator-(const point_t other) const;
+    point_t operator+(const point_t other) const;
+    point_t operator*(const double coef) const;
+    point_t operator/(const double coef) const;
+    point_t &operator+=(const point_t other);
+    point_t &operator-=(const point_t other);
+    point_t &operator*=(const double other);
   };
 
-  struct Rectangle_t
+  struct rectangle_t
   {
-    double width, height;
-    Point_t pos;
+    double width_, height_;
+    point_t pos_;
   };
 
   struct Shape
   {
-    virtual double getArea() const = 0;
-    virtual Rectangle_t getFrameRect() const = 0;
-    virtual void move(Point_t target) = 0;
-    virtual void move(double dx, double dy) = 0;
-    virtual void scale(double coef) = 0;
     virtual ~Shape() = default;
+
+    virtual double getArea() const noexcept = 0;
+    virtual rectangle_t getFrameRect() const noexcept = 0;
+    virtual void move(point_t target) noexcept = 0;
+    virtual void move(double dx, double dy) noexcept = 0;
+    virtual void scale(double coef) noexcept = 0;
   };
 
-  struct Rectangle: Shape
+  struct Rectangle final: Shape
   {
-    Rectangle(Point_t p, double w, double h);
-    double getArea() const override;
-    Rectangle_t getFrameRect() const override;
-    void move(Point_t target) override;
-    void move(double dx, double dy) override;
-    void scale(double coef) override;
+    Rectangle(point_t p, double w, double h);
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(point_t target) noexcept override;
+    void move(double dx, double dy) noexcept override;
+    void scale(double coef) noexcept override;
 
   private:
-    Point_t pos;
-    double width, height;
+    point_t pos_;
+    double width_, height_;
   };
 
-  struct Square: Shape
+  struct Square final: Shape
   {
-    Square(Point_t p, double s);
-    double getArea() const override;
-    Rectangle_t getFrameRect() const override;
-    void move(Point_t target) override;
-    void move(double dx, double dy) override;
-    void scale(double coef) override;
+    Square(point_t p, double s);
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(point_t target) noexcept override;
+    void move(double dx, double dy) noexcept override;
+    void scale(double coef) noexcept override;
 
   private:
-    Point_t pos;
-    double side;
+    point_t pos_;
+    double side_;
   };
 
-  struct Polygon: Shape
+  struct Polygon final: Shape
   {
-    Polygon(Point_t *vs, size_t kk);
+    Polygon(point_t *vs, size_t kk);
     ~Polygon();
     Polygon(const Polygon &other);
     Polygon &operator=(const Polygon &other);
     Polygon(Polygon &&other) noexcept;
     Polygon &operator=(Polygon &&other) noexcept;
 
-    double getArea() const override;
-    Rectangle_t getFrameRect() const override;
-    void move(Point_t target) override;
-    void move(double dx, double dy) override;
-    void scale(double coef) override;
+    double getArea() const noexcept override;
+    rectangle_t getFrameRect() const noexcept override;
+    void move(point_t target) noexcept override;
+    void move(double dx, double dy) noexcept override;
+    void scale(double coef) noexcept override;
 
   private:
-    Point_t *vertexes;
-    size_t k;
-    Point_t pos;
+    point_t *vertexes_;
+    size_t k_;
+    point_t pos_;
   };
 
-  Point_t calculateCenter(Point_t *vs, size_t kk);
+  point_t calculateCenter(const point_t *vs, const size_t kk);
 
-  void isotropicScaleFromPoint(Shape **shps, size_t k, Point_t pt, double coef);
+  void isotropicScaleFromPoint(Shape **shps, const size_t k, const point_t pt, const double coef);
 
-  void TellStatistics(Shape **shps, size_t k);
+  void tellStatistics(const Shape **shps, const size_t k);
 }
 
 int main()
 {
-  using saldaev::Point_t;
+  using saldaev::point_t;
   using saldaev::Polygon;
   using saldaev::Rectangle;
   using saldaev::Shape;
   using saldaev::Square;
 
-  Shape *shps[3] = {};
-  shps[0] = new Rectangle({10, 10}, 5, 3);
-  shps[1] = new Square({-1, -1}, 10);
-  Point_t vss[6] = {{0, 0}, {-2, 3}, {-1, 5}, {0, 4}, {1, 5}, {2, 3}};
-  shps[2] = new Polygon(vss, 6);
-
-  std::cout << "before:\n";
-  saldaev::TellStatistics(shps, 3);
-
-  double x = 0, y = 0, c = 0;
-  std::cin >> x >> y >> c;
-  if (std::cin.fail() || c < 0) {
-    std::cerr << "bad input" << '\n';
-    for (size_t i = 0; i < 3; ++i) {
+  Shape *shps[saldaev::ShapeAmount] = {nullptr, nullptr, nullptr};
+  try {
+    shps[0] = new Rectangle({10, 10}, 5, 3);
+    shps[1] = new Square({-1, -1}, 10);
+    point_t vss[6] = {{0, 0}, {-2, 3}, {-1, 5}, {0, 4}, {1, 5}, {2, 3}};
+    shps[2] = new Polygon(vss, 6);
+  } catch (const std::bad_alloc &e) {
+    for (size_t i = 0; i < saldaev::ShapeAmount; ++i) {
       delete shps[i];
     }
     return 1;
   }
 
-  isotropicScaleFromPoint(shps, 3, {x, y}, c);
+  std::cout << "before:\n";
+  saldaev::tellStatistics(shps, saldaev::ShapeAmount);
+
+  double x = 0, y = 0, c = 0;
+  std::cin >> x >> y >> c;
+  if (std::cin.fail() || c < 0) {
+    std::cerr << "bad input" << '\n';
+    for (size_t i = 0; i < saldaev::ShapeAmount; ++i) {
+      delete shps[i];
+    }
+    return 1;
+  }
+
+  isotropicScaleFromPoint(shps, saldaev::ShapeAmount, {x, y}, c);
 
   std::cout << "\nafter:\n";
-  saldaev::TellStatistics(shps, 3);
+  saldaev::tellStatistics(shps, saldaev::ShapeAmount);
 
-  for (size_t i = 0; i < 3; ++i) {
+  for (size_t i = 0; i < saldaev::ShapeAmount; ++i) {
     delete shps[i];
   }
 
   return 0;
 }
 
-saldaev::Point_t saldaev::Point_t::operator-(const Point_t &other)
+saldaev::point_t saldaev::point_t::operator-(const point_t other) const
 {
-  return {x - other.x, y - other.y};
+  return {x_ - other.x_, y_ - other.y_};
 }
 
-saldaev::Point_t saldaev::Point_t::operator+(const Point_t &other)
+saldaev::point_t saldaev::point_t::operator+(const point_t other) const
 {
-  return {x + other.x, y + other.y};
+  return {x_ + other.x_, y_ + other.y_};
 }
 
-saldaev::Point_t saldaev::Point_t::operator*(const double &coef)
+saldaev::point_t saldaev::point_t::operator*(const double coef) const
 {
-  return {x * coef, y * coef};
+  return {x_ * coef, y_ * coef};
 }
 
-saldaev::Point_t saldaev::Point_t::operator/(const double &coef)
+saldaev::point_t saldaev::point_t::operator/(const double coef) const
 {
-  return {x / coef, y / coef};
+  return {x_ / coef, y_ / coef};
 }
 
-saldaev::Point_t &saldaev::Point_t::operator+=(const Point_t &other)
+saldaev::point_t &saldaev::point_t::operator+=(const point_t other)
 {
-  x += other.x;
-  y += other.y;
+  x_ += other.x_;
+  y_ += other.y_;
   return *this;
 }
 
-saldaev::Point_t &saldaev::Point_t::operator-=(const Point_t &other)
+saldaev::point_t &saldaev::point_t::operator-=(const point_t other)
 {
-  x -= other.x;
-  y -= other.y;
+  x_ -= other.x_;
+  y_ -= other.y_;
   return *this;
 }
 
-saldaev::Point_t &saldaev::Point_t::operator*=(const double &other)
+saldaev::point_t &saldaev::point_t::operator*=(const double other)
 {
-  x *= other;
-  y *= other;
+  x_ *= other;
+  y_ *= other;
   return *this;
 }
 
-saldaev::Rectangle::Rectangle(Point_t p, double w, double h):
-  Shape(),
-  pos(p),
-  width(w),
-  height(h)
+saldaev::Rectangle::Rectangle(point_t p, double w, double h):
+  pos_(p),
+  width_(w),
+  height_(h)
 {}
 
 double saldaev::Rectangle::getArea() const
 {
-  return width * height;
+  return width_ * height_;
 }
 
-saldaev::Rectangle_t saldaev::Rectangle::getFrameRect() const
+saldaev::rectangle_t saldaev::Rectangle::getFrameRect() const
 {
-  return {width, height, pos};
+  return {width_, height_, pos_};
 }
 
-void saldaev::Rectangle::move(Point_t target)
+void saldaev::Rectangle::move(point_t target)
 {
-  pos = target;
+  pos_ = target;
 }
 
 void saldaev::Rectangle::move(double dx, double dy)
 {
-  pos.x += dx;
-  pos.y += dy;
+  pos_.x_ += dx;
+  pos_.y_ += dy;
 }
 
 void saldaev::Rectangle::scale(double coef)
 {
-  width *= coef;
-  height *= coef;
+  width_ *= coef;
+  height_ *= coef;
 }
 
-saldaev::Square::Square(Point_t p, double s):
+saldaev::Square::Square(point_t p, double s):
   Shape(),
-  pos(p),
-  side(s)
+  pos_(p),
+  side_(s)
 {}
 
 double saldaev::Square::getArea() const
 {
-  return side * side;
+  return side_ * side_;
 }
 
-saldaev::Rectangle_t saldaev::Square::getFrameRect() const
+saldaev::rectangle_t saldaev::Square::getFrameRect() const
 {
-  return {side, side, pos};
+  return {side_, side_, pos_};
 }
 
-void saldaev::Square::move(Point_t target)
+void saldaev::Square::move(point_t target)
 {
-  pos = target;
+  pos_ = target;
 }
 
 void saldaev::Square::move(double dx, double dy)
 {
-  pos.x += dx;
-  pos.y += dy;
+  pos_.x_ += dx;
+  pos_.y_ += dy;
 }
 
 void saldaev::Square::scale(double coef)
 {
-  side *= coef;
+  side_ *= coef;
 }
 
-saldaev::Polygon::Polygon(Point_t *vs, size_t kk):
-  k(kk),
-  pos(calculateCenter(vs, kk))
+saldaev::Polygon::Polygon(point_t *vs, size_t kk):
+  k_(kk),
+  pos_(calculateCenter(vs, kk)),
+  vertexes_(new point_t[k_])
 {
-  vertexes = new Point_t[k];
-  for (size_t i = 0; i < k; ++i) {
-    vertexes[i] = vs[i];
+  for (size_t i = 0; i < k_; ++i) {
+    vertexes_[i] = vs[i];
   }
 }
 
 saldaev::Polygon::~Polygon()
 {
-  delete[] vertexes;
+  delete[] vertexes_;
 }
 
 saldaev::Polygon::Polygon(const Polygon &other):
-  vertexes(new Point_t[other.k]),
-  k(other.k),
-  pos(other.pos)
+  vertexes_(new point_t[other.k_]),
+  k_(other.k_),
+  pos_(other.pos_)
 {
-  for (size_t i = 0; i < k; ++i) {
-    vertexes[i] = other.vertexes[i];
+  for (size_t i = 0; i < k_; ++i) {
+    vertexes_[i] = other.vertexes_[i];
   }
 }
 
@@ -262,25 +271,25 @@ saldaev::Polygon &saldaev::Polygon::operator=(const Polygon &other)
   if (&other == this) {
     return *this;
   }
+  k_ = other.k_;
+  pos_ = other.pos_;
 
-  k = other.k;
-  pos = other.pos;
-
-  delete[] vertexes;
-  vertexes = new Point_t[other.k];
-  for (size_t i = 0; i < k; ++i) {
-    vertexes[i] = other.vertexes[i];
+  point_t* newVertexes = new point_t[other.k_];
+  delete[] vertexes_;
+  vertexes_ = newVertexes;
+  for (size_t i = 0; i < k_; ++i) {
+    vertexes_[i] = other.vertexes_[i];
   }
 
   return *this;
 }
 
 saldaev::Polygon::Polygon(Polygon &&other) noexcept:
-  vertexes(other.vertexes),
-  k(other.k),
-  pos(other.pos)
+  vertexes_(other.vertexes_),
+  k_(other.k_),
+  pos_(other.pos_)
 {
-  other.vertexes = nullptr;
+  other.vertexes_ = nullptr;
 }
 
 saldaev::Polygon &saldaev::Polygon::operator=(Polygon &&other) noexcept
@@ -289,12 +298,12 @@ saldaev::Polygon &saldaev::Polygon::operator=(Polygon &&other) noexcept
     return *this;
   }
 
-  k = other.k;
-  pos = other.pos;
+  k_ = other.k_;
+  pos_ = other.pos_;
 
-  delete[] vertexes;
-  vertexes = other.vertexes;
-  other.vertexes = nullptr;
+  delete[] vertexes_;
+  vertexes_ = other.vertexes_;
+  other.vertexes_ = nullptr;
 
   return *this;
 }
@@ -303,25 +312,25 @@ double saldaev::Polygon::getArea() const
 {
   double area = 0;
   size_t j = 0;
-  for (size_t i = 0; i < k; ++i) {
-    j = (i + 1) % k;
-    area += vertexes[i].x * vertexes[j].y - vertexes[j].x * vertexes[i].y;
+  for (size_t i = 0; i < k_; ++i) {
+    j = (i + 1) % k_;
+    area += vertexes_[i].x_ * vertexes_[j].y_ - vertexes_[j].x_ * vertexes_[i].y_;
   }
   return std::abs(area) * 0.5;
 }
 
-saldaev::Rectangle_t saldaev::Polygon::getFrameRect() const
+saldaev::rectangle_t saldaev::Polygon::getFrameRect() const
 {
-  double maxx = vertexes[0].x;
+  double maxx = vertexes_[0].x_;
   double minx = maxx;
-  double maxy = vertexes[0].y;
+  double maxy = vertexes_[0].y_;
   double miny = maxy;
 
-  for (size_t i = 1; i < k; ++i) {
-    maxx = std::max(maxx, vertexes[i].x);
-    minx = std::min(minx, vertexes[i].x);
-    maxy = std::max(maxy, vertexes[i].y);
-    miny = std::min(miny, vertexes[i].y);
+  for (size_t i = 1; i < k_; ++i) {
+    maxx = std::max(maxx, vertexes_[i].x_);
+    minx = std::min(minx, vertexes_[i].x_);
+    maxy = std::max(maxy, vertexes_[i].y_);
+    miny = std::min(miny, vertexes_[i].y_);
   }
 
   double dx = maxx - minx;
@@ -329,44 +338,41 @@ saldaev::Rectangle_t saldaev::Polygon::getFrameRect() const
   return {dx, dy, {minx + dx / 2, miny + dy / 2}};
 }
 
-void saldaev::Polygon::move(Point_t target)
+void saldaev::Polygon::move(point_t target)
 {
-  Point_t dp = target - pos;
-  for (size_t i = 0; i < k; ++i) {
-    vertexes[i] += dp;
-  }
-  pos += dp;
+  point_t dp = target - pos_;
+  this->move(dp.x_, dp.y_);
 }
 
 void saldaev::Polygon::move(double dx, double dy)
 {
-  pos += {dx, dy};
-  for (size_t i = 0; i < k; ++i) {
-    vertexes[i] += {dx, dy};
+  pos_ += {dx, dy};
+  for (size_t i = 0; i < k_; ++i) {
+    vertexes_[i] += {dx, dy};
   }
 }
 
 void saldaev::Polygon::scale(double coef)
 {
-  for (size_t i = 0; i < k; ++i) {
-    vertexes[i] += (vertexes[i] - pos) * (coef - 1);
+  for (size_t i = 0; i < k_; ++i) {
+    vertexes_[i] += (vertexes_[i] - pos_) * (coef - 1);
   }
 }
 
-saldaev::Point_t saldaev::calculateCenter(Point_t *vs, size_t kk)
+saldaev::point_t saldaev::calculateCenter(const point_t *vs, const size_t kk)
 {
   if (kk < 3) {
     throw std::logic_error("Invalid polygon vertices");
   }
-  Point_t centre = {0, 0};
+  point_t centre = {0, 0};
   double t_area = 0;
   double sum_area = 0;
-  Point_t ab = {0, 0};
-  Point_t ac = {0, 0};
+  point_t ab = {0, 0};
+  point_t ac = {0, 0};
   for (size_t i = 1; i < kk - 1; ++i) {
     ab = vs[i] - vs[0];
     ac = vs[i + 1] - vs[0];
-    t_area = (ab.x * ac.y - ab.y * ac.x) / 2.0;
+    t_area = (ab.x_ * ac.y_ - ab.y_ * ac.x_) / 2.0;
     centre += ((vs[0] + vs[i] + vs[i + 1]) / 3.0) * t_area;
     sum_area += t_area;
   }
@@ -377,37 +383,37 @@ saldaev::Point_t saldaev::calculateCenter(Point_t *vs, size_t kk)
   return centre / sum_area;
 }
 
-void saldaev::isotropicScaleFromPoint(Shape **shps, size_t k, Point_t pt, double coef)
+void saldaev::isotropicScaleFromPoint(Shape **shps, size_t k, point_t pt, double coef)
 {
   for (size_t i = 0; i < k; ++i) {
-    Point_t p1 = shps[i]->getFrameRect().pos;
+    point_t p1 = shps[i]->getFrameRect().pos_;
     shps[i]->move(pt);
-    Point_t p2 = shps[i]->getFrameRect().pos;
+    point_t p2 = shps[i]->getFrameRect().pos_;
     shps[i]->move(pt + ((p1 - p2) * coef));
     shps[i]->scale(coef);
   }
 }
 
-void saldaev::TellStatistics(Shape **shps, size_t k)
+void saldaev::tellStatistics(Shape **shps, size_t k)
 {
   double area = 0;
   double sum_area = 0;
-  saldaev::Rectangle_t frame = {0, 0, {0, 0}};
-  double mix = shps[0]->getFrameRect().pos.x - shps[0]->getFrameRect().width / 2;
+  saldaev::rectangle_t frame = {0, 0, {0, 0}};
+  double mix = shps[0]->getFrameRect().pos_.x_ - shps[0]->getFrameRect().width_ / 2;
   double max = mix;
-  double miy = shps[0]->getFrameRect().pos.y - shps[0]->getFrameRect().height / 2;
+  double miy = shps[0]->getFrameRect().pos_.y_ - shps[0]->getFrameRect().height_ / 2;
   double may = miy;
 
   for (size_t i = 0; i < k; ++i) {
     area = shps[i]->getArea();
     frame = shps[i]->getFrameRect();
-    std::cout << " * own area - " << area << ", frame: {" << frame.pos.x << ", ";
-    std::cout << frame.pos.y << "}, w - " << frame.width << ", h - " << frame.height << '\n';
+    std::cout << " * own area - " << area << ", frame: {" << frame.pos_.x_ << ", ";
+    std::cout << frame.pos_.y_ << "}, w - " << frame.width_ << ", h - " << frame.height_ << '\n';
     sum_area += area;
-    mix = std::min(mix, frame.pos.x - frame.width / 2);
-    max = std::max(max, frame.pos.x + frame.width / 2);
-    miy = std::min(miy, frame.pos.y - frame.height / 2);
-    may = std::max(may, frame.pos.y + frame.height / 2);
+    mix = std::min(mix, frame.pos_.x_ - frame.width_ / 2);
+    max = std::max(max, frame.pos_.x_ + frame.width_ / 2);
+    miy = std::min(miy, frame.pos_.y_ - frame.height_ / 2);
+    may = std::max(may, frame.pos_.y_ + frame.height_ / 2);
   }
   std::cout << "sum area - " << sum_area << ", frame: {" << (mix + max) / 2 << ", ";
   std::cout << (miy + may) / 2 << "}, w - " << max - mix << ", h - " << may - miy << "\n";
