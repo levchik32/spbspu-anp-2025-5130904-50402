@@ -120,7 +120,7 @@ int main()
 
   double x = 0, y = 0, c = 0;
   std::cin >> x >> y >> c;
-  if (std::cin.fail() || c < 0) {
+  if (std::cin.fail() || c <= 0) {
     std::cerr << "bad input" << '\n';
     for (size_t i = 0; i < saldaev::ShapeAmount; ++i) {
       delete shps[i];
@@ -260,7 +260,7 @@ void saldaev::Square::doScale(double coef) noexcept
 }
 
 saldaev::Polygon::Polygon(point_t *vs, size_t kk):
-  vertexes_(new point_t[k_]),
+  vertexes_(new point_t[kk]),
   k_(kk),
   pos_(calculateCenter(vs, kk))
 {
