@@ -33,7 +33,8 @@ namespace saldaev
 
     void scale(double coef);
     void nsfwscale(double coef) noexcept;
-    private:
+
+  private:
     virtual void doScale(double coef) noexcept = 0;
   };
 
@@ -182,8 +183,7 @@ saldaev::point_t &saldaev::point_t::operator*=(const double other) noexcept
 
 void saldaev::Shape::scale(double coef)
 {
-  if (coef <= 0)
-  {
+  if (coef <= 0) {
     throw std::logic_error("coef <= 0");
   }
   doScale(coef);
@@ -260,9 +260,9 @@ void saldaev::Square::doScale(double coef) noexcept
 }
 
 saldaev::Polygon::Polygon(point_t *vs, size_t kk):
+  vertexes_(new point_t[k_]),
   k_(kk),
-  pos_(calculateCenter(vs, kk)),
-  vertexes_(new point_t[k_])
+  pos_(calculateCenter(vs, kk))
 {
   for (size_t i = 0; i < k_; ++i) {
     vertexes_[i] = vs[i];
@@ -292,7 +292,7 @@ saldaev::Polygon &saldaev::Polygon::operator=(const Polygon &other)
   k_ = other.k_;
   pos_ = other.pos_;
 
-  point_t* newVertexes = new point_t[other.k_];
+  point_t *newVertexes = new point_t[other.k_];
   delete[] vertexes_;
   vertexes_ = newVertexes;
   for (size_t i = 0; i < k_; ++i) {
