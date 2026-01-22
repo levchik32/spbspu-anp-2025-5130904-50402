@@ -74,9 +74,9 @@ namespace saldaev
     void move(double dx, double dy) noexcept override;
 
   private:
-    point_t *vertexes_;
     size_t k_;
     point_t pos_;
+    point_t *vertexes_;
     void doScale(double coef) noexcept override;
   };
 
@@ -267,9 +267,9 @@ void saldaev::Square::doScale(double coef) noexcept
 }
 
 saldaev::Polygon::Polygon(point_t *vs, size_t kk):
-  vertexes_(new point_t[kk]),
   k_(kk),
-  pos_(calculateCenter(vs, kk))
+  pos_(calculateCenter(vs, kk)),
+  vertexes_(new point_t[kk])
 {
   for (size_t i = 0; i < k_; ++i) {
     vertexes_[i] = vs[i];
@@ -282,9 +282,9 @@ saldaev::Polygon::~Polygon()
 }
 
 saldaev::Polygon::Polygon(const Polygon &other):
-  vertexes_(new point_t[other.k_]),
   k_(other.k_),
-  pos_(other.pos_)
+  pos_(other.pos_),
+  vertexes_(new point_t[other.k_])
 {
   for (size_t i = 0; i < k_; ++i) {
     vertexes_[i] = other.vertexes_[i];
@@ -310,9 +310,9 @@ saldaev::Polygon &saldaev::Polygon::operator=(const Polygon &other)
 }
 
 saldaev::Polygon::Polygon(Polygon &&other) noexcept:
-  vertexes_(other.vertexes_),
   k_(other.k_),
-  pos_(other.pos_)
+  pos_(other.pos_),
+  vertexes_(other.vertexes_)
 {
   other.vertexes_ = nullptr;
 }
