@@ -7,13 +7,6 @@ namespace saldaev
   struct point_t
   {
     double x, y;
-    point_t operator-(const point_t other) const noexcept;
-    point_t operator+(const point_t other) const noexcept;
-    point_t operator*(const double coef) const noexcept;
-    point_t operator/(const double coef) const noexcept;
-    point_t &operator+=(const point_t other) noexcept;
-    point_t &operator-=(const point_t other) noexcept;
-    point_t &operator*=(const double other) noexcept;
   };
 
   struct rectangle_t
@@ -87,10 +80,18 @@ namespace saldaev
     void doScale(double coef) noexcept override;
   };
 
+  point_t operator+(const point_t &a, const point_t &b) noexcept;
+  point_t operator-(const point_t &a, const point_t &b) noexcept;
+  point_t operator*(const point_t &p, double coef) noexcept;
+  point_t operator/(const point_t &p, double coef) noexcept;
+
+  point_t &operator+=(point_t &a, const point_t &b) noexcept;
+  point_t &operator-=(point_t &a, const point_t &b) noexcept;
+  point_t &operator*=(point_t &p, double coef) noexcept;
+  point_t &operator/=(point_t &p, double coef) noexcept;
+
   point_t calculateCenter(const point_t *vs, const size_t kk);
-
   void isotropicScaleFromPoint(Shape **shps, const size_t k, const point_t pt, const double coef);
-
   void tellStatistics(const Shape *const *shps, const size_t k) noexcept;
 }
 
@@ -140,45 +141,52 @@ int main()
   return 0;
 }
 
-saldaev::point_t saldaev::point_t::operator-(const point_t other) const noexcept
+saldaev::point_t saldaev::operator-(const point_t &a, const point_t &b) noexcept
 {
-  return {x - other.x, y - other.y};
+  return {a.x - b.x, a.y - b.y};
 }
 
-saldaev::point_t saldaev::point_t::operator+(const point_t other) const noexcept
+saldaev::point_t saldaev::operator+(const point_t &a, const point_t &b) noexcept
 {
-  return {x + other.x, y + other.y};
+  return {a.x + b.x, a.y + b.y};
 }
 
-saldaev::point_t saldaev::point_t::operator*(const double coef) const noexcept
+saldaev::point_t saldaev::operator*(const point_t &p, double coef) noexcept
 {
-  return {x * coef, y * coef};
+  return {p.x * coef, p.y * coef};
 }
 
-saldaev::point_t saldaev::point_t::operator/(const double coef) const noexcept
+saldaev::point_t saldaev::operator/(const point_t &p, double coef) noexcept
 {
-  return {x / coef, y / coef};
+  return {p.x / coef, p.y / coef};
 }
 
-saldaev::point_t &saldaev::point_t::operator+=(const point_t other) noexcept
+saldaev::point_t &saldaev::operator+=(point_t &a, const point_t &b) noexcept
 {
-  x += other.x;
-  y += other.y;
-  return *this;
+  a.x += b.x;
+  a.y += b.y;
+  return a;
 }
 
-saldaev::point_t &saldaev::point_t::operator-=(const point_t other) noexcept
+saldaev::point_t &saldaev::operator-=(point_t &a, const point_t &b) noexcept
 {
-  x -= other.x;
-  y -= other.y;
-  return *this;
+  a.x -= b.x;
+  a.y -= b.y;
+  return a;
 }
 
-saldaev::point_t &saldaev::point_t::operator*=(const double other) noexcept
+saldaev::point_t &saldaev::operator*=(point_t &p, double coef) noexcept
 {
-  x *= other;
-  y *= other;
-  return *this;
+  p.x *= coef;
+  p.y *= coef;
+  return p;
+}
+
+saldaev::point_t &saldaev::operator/=(point_t &p, double coef) noexcept
+{
+  p.x /= coef;
+  p.y /= coef;
+  return p;
 }
 
 void saldaev::Shape::scale(double coef)
