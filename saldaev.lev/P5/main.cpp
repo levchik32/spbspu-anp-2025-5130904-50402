@@ -1,19 +1,10 @@
 #include <cmath>
 #include <iostream>
+#include "geom.hpp"
+
 namespace saldaev
 {
   const size_t ShapeAmount = 3;
-
-  struct point_t
-  {
-    double x, y;
-  };
-
-  struct rectangle_t
-  {
-    double width, height;
-    point_t pos;
-  };
 
   struct Shape
   {
@@ -139,54 +130,6 @@ int main()
   }
 
   return 0;
-}
-
-saldaev::point_t saldaev::operator-(const point_t &a, const point_t &b) noexcept
-{
-  return {a.x - b.x, a.y - b.y};
-}
-
-saldaev::point_t saldaev::operator+(const point_t &a, const point_t &b) noexcept
-{
-  return {a.x + b.x, a.y + b.y};
-}
-
-saldaev::point_t saldaev::operator*(const point_t &p, double coef) noexcept
-{
-  return {p.x * coef, p.y * coef};
-}
-
-saldaev::point_t saldaev::operator/(const point_t &p, double coef) noexcept
-{
-  return {p.x / coef, p.y / coef};
-}
-
-saldaev::point_t &saldaev::operator+=(point_t &a, const point_t &b) noexcept
-{
-  a.x += b.x;
-  a.y += b.y;
-  return a;
-}
-
-saldaev::point_t &saldaev::operator-=(point_t &a, const point_t &b) noexcept
-{
-  a.x -= b.x;
-  a.y -= b.y;
-  return a;
-}
-
-saldaev::point_t &saldaev::operator*=(point_t &p, double coef) noexcept
-{
-  p.x *= coef;
-  p.y *= coef;
-  return p;
-}
-
-saldaev::point_t &saldaev::operator/=(point_t &p, double coef) noexcept
-{
-  p.x /= coef;
-  p.y /= coef;
-  return p;
 }
 
 void saldaev::Shape::scale(double coef)
