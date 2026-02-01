@@ -4,7 +4,7 @@
 
 namespace
 {
-  saldaev::point_t calculateCenter(const saldaev::point_t *vs, const size_t kk)
+  saldaev::point_t calculateCenter(const saldaev::point_t *vs, size_t kk)
   {
     if (kk < 3) {
       throw std::logic_error("Invalid polygon vertices");

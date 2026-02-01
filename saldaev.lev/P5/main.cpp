@@ -1,17 +1,17 @@
+#include "geom.hpp"
+#include "polygon.hpp"
+#include "rectangle.hpp"
+#include "shape.hpp"
+#include "square.hpp"
 #include <cmath>
 #include <iostream>
-#include "geom.hpp"
-#include "shape.hpp"
-#include "rectangle.hpp"
-#include "square.hpp"
-#include "polygon.hpp"
 
 namespace saldaev
 {
   const size_t ShapeAmount = 3;
 
-  void isotropicScaleFromPoint(Shape **shps, const size_t k, const point_t pt, const double coef);
-  void tellStatistics(const Shape *const *shps, const size_t k) noexcept;
+  void isotropicScaleFromPoint(Shape **shps, size_t k, point_t pt, double coef);
+  void tellStatistics(const Shape *const *shps, size_t k) noexcept;
 }
 
 int main()
