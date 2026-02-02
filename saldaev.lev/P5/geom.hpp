@@ -14,13 +14,13 @@ namespace saldaev
     point_t pos;
   };
 
-  point_t operator+(const point_t &a, const point_t &b) noexcept;
-  point_t operator-(const point_t &a, const point_t &b) noexcept;
-  point_t operator*(const point_t &p, double coef) noexcept;
-  point_t operator/(const point_t &p, double coef) noexcept;
+  point_t operator+(point_t a, point_t b) noexcept;
+  point_t operator-(point_t a, point_t b) noexcept;
+  point_t operator*(point_t p, double coef) noexcept;
+  point_t operator/(point_t p, double coef) noexcept;
 
-  point_t &operator+=(point_t &a, const point_t &b) noexcept;
-  point_t &operator-=(point_t &a, const point_t &b) noexcept;
+  point_t &operator+=(point_t &a, point_t b) noexcept;
+  point_t &operator-=(point_t &a, point_t b) noexcept;
   point_t &operator*=(point_t &p, double coef) noexcept;
   point_t &operator/=(point_t &p, double coef) noexcept;
 }

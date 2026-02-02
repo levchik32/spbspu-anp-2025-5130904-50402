@@ -1,10 +1,10 @@
+#include <cmath>
+#include <iostream>
 #include "geom.hpp"
 #include "polygon.hpp"
 #include "rectangle.hpp"
 #include "shape.hpp"
 #include "square.hpp"
-#include <cmath>
-#include <iostream>
 
 namespace saldaev
 {
@@ -28,7 +28,7 @@ int main()
     shps[1] = new Square({-1, -1}, 10);
     point_t vss[6] = {{0, 0}, {-2, 3}, {-1, 5}, {0, 4}, {1, 5}, {2, 3}};
     shps[2] = new Polygon(vss, 6);
-  } catch (const std::bad_alloc &e) {
+  } catch (const std::exception &e) {
     for (size_t i = 0; i < saldaev::ShapeAmount; ++i) {
       delete shps[i];
     }
